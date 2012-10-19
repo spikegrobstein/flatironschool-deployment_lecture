@@ -1,60 +1,57 @@
 # Flatiron School Lecture Notes
 
-Ops for Developers. Where to go from here.
+Deploying your first app.
 
-## Differences between development and production
+## Who am I?
 
-### Operating System
+ * Sr DevOps Engineer at Ticket Evolution
+ * Systems and Developer in one, specializing in automation and deployment
+ * 10 years Linux experience
 
- * OSX vs Linux
- * starting and stopping services
+## Going from development to production
+
+### Virtualization
+
+ * what is it, exactly?
+ * why is it so great?
+ * why wouldn't you want it?
 
 ### appservers
 
- * weBRICK vs Thin
+ * local development vs production
  * passenger
-   * apache
    * nginx
- * also mentioned: unicorn, puma, einhorn
 
-### security model
+## Setting up the server
 
- * users
- * permissions
- * how they apply to a deployed app
-   * contrast php vs rails on passenger
- * sudo
-
-### web server basics
-
- * internals of how requests are handled from client-server-nginx-rails
- * external databases (postgres/mysql)
+ * Linode
+ * Creating your app's user
+ * installing the necessary packages
+   * apt-get
+     * ruby
+     * ruby-dev
+     * rubygems
+     * build-essential
+     * database (postgres)
+   * gem
+     * bundler
+     * passenger
+ * set up passenger/nginx
+   * point it to the right place
+ * set up production database
 
 ## Deployment
 
-### capistrano
+### Capistrano
 
  * getting capified
- * preparing the server
+ * how Capistrano deploys
  * doing your first deploy
- * deployment maintenance
-   * `number_to_keep`
+   * cap deploy:setup
+   * cap deploy
+ * verify that the app is working
 
 ## Once you're up and running
 
+ * backups
  * logrotate
- * keeping an eye on things
-   * top
-   * iotop
-   * htop
-   * netstat
-   * iostat
-   * uptime
- * load averages
-
-### Backups!
-
- * what to back up
- * why to back up
- * where to back it up
- * testing your backups
