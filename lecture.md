@@ -156,5 +156,39 @@ We will fill it out... INSERT MORE INSTRUCTIONS
 
 ## Once you're up and running
 
- * backups
- * logrotate
+Following are some topics that need to be mentioned, but are beyond the scope of this lecture.
+
+### Logrotate
+
+After your app is launched, there is a common thing that many people miss, and that is `logrotate`.
+
+Logrotate is a package, which is usually installed on most servers by default and it watches your
+logfiles on a schedule and will compress them and delete them as necessary. Although it is typically
+already configured for your system logs, if you want to rotate your application's logs, you'll have
+to configure this manually.
+
+Since running out of disk space is a very common cause of sites going offline, `logrotate` is
+necessary to keep that aspect of your server in check. Without `logrotate`, on a long enough timeline
+your disk *will* fill up.
+
+I typically configure it to compress my logs once a day and only keep 8 days worth of logs. This way,
+the server always has the last week's worth of logs available for you to examine if necessary, and
+unless your app is getting a **serious** amount of traffic, all of your logs probably won't take up
+more than 100MB.
+
+### Backups
+
+Another thing that I need to mention is backups. In today's day and age of automated server
+configuration, server images and fast internet connections, full-system backups aren't as necessary.
+Most of the time, you'll find that you really only want to back up your application's data (databases, etc)
+and, if you're into long-term analytics, your log files.
+
+Just remember, replication of your databases and RAID for your disks are not acceptable alternatives
+for backing up. Dataloss due to user-error or malicious users will replicate the same as your
+normal data. Also, copy your backups off the server, preferably to another physical location such as
+S3 or another provider.
+
+And last piece of advice: Test your backups regularly. There's nothing worse than thinking you have
+backups, having dataloss and discovering that all this data you've been hoarding is unusable or
+incomplete.
+
