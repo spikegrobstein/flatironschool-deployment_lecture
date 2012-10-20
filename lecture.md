@@ -1,6 +1,6 @@
 # Flatiron School Lecture Notes
 
-Deploying your first app.
+*Deploying your first app.*
 
 ## Who am I?
 
