@@ -6,7 +6,7 @@ Deploying your first app.
 
  * Sr DevOps Engineer at Ticket Evolution
  * Systems and Software Engineer in one, specializing in automation and deployment
- * 10 years Linux experience
+ * over 10 years of Linux experience
 
 ## Going from development to production
 
@@ -49,7 +49,8 @@ only a couple bucks. If you want to start over, it's as easy as pushing a button
 
 There are many cases where one may want to squeeze every last CPU cycle or disk read out of their
 application that they can. Also, when you have a single system that you want to be very large,
-such as 32 CPU cores and 128GB of RAM, the overhead of the virtualization layer may be too much.
+such as 32 CPU cores and 128GB of RAM, the virtualization layer may not be worth the added
+administration and performance overhead.
 
 Typically large applications will put their databases on non-virtualized, dedicated hardware
 in an attempt to get as much IO and CPU power as they can.
