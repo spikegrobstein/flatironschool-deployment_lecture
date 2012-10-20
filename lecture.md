@@ -5,7 +5,7 @@ Deploying your first app.
 ## Who am I?
 
  * Sr DevOps Engineer at Ticket Evolution
- * Systems and Developer in one, specializing in automation and deployment
+ * Systems and Software Engineer in one, specializing in automation and deployment
  * 10 years Linux experience
 
 ## Going from development to production
