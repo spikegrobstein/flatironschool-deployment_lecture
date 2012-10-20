@@ -58,17 +58,22 @@ in an attempt to get as much IO and CPU power as they can.
 Today, we'll be setting up and deploying our application to a virtualized server, so I won't talk
 any more about this.
 
-### appservers
+## Provisioning your server
 
- * local development vs production
- * passenger
-   * nginx
+There are a whole slew of providers out there. In this lecture, I'm going to talk about how to
+provision a server on Linode, which, in my opinion is the right balance of price, ease of
+administration and quality of service.
+
+ * Signing up for Linode
+ * choosing the correct server size
+ * connecting to the server for the first time.
+
+ * Creating your app's user
 
 ## Getting the server ready for your application
 
- * Linode
-
- * Creating your app's user
+Now that you have a server and you can connect to it, it's time to prep it so you can run your
+application on it.
 
 ### Installing the necessary packages
 
