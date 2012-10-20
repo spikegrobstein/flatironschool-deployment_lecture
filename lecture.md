@@ -8,6 +8,17 @@
  * Systems and Software Engineer in one, specializing in automation and deployment
  * over 10 years of Linux experience
 
+## What this lecture will cover
+
+In this lecture, I will cover the steps necessary for taking the next great app that you build
+and have been running locally while developing and get it running on a server so anyone in the
+world can access it on the public internet.
+
+You'll learn how to get your first virtualized private server, or VPS, set up for your
+application, install your database software, and deploy the app. From there, you'll learn how
+to update your application on the server to fix bugs or add features in a way that allows you
+to roll back your code in the case of a show-stopping bug.
+
 ## Going from development to production
 
 ### Virtualization
@@ -66,6 +77,7 @@ administration and quality of service.
 
  * Signing up for Linode
  * choosing the correct server size
+ * chosing your Linux distribution
  * connecting to the server for the first time.
 
  * Creating your app's user
