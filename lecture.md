@@ -185,6 +185,8 @@ The Passenger gem installs all of the helper applications and scripts for instal
 as an Apache or nginx module. Since we're going to run this in nginx, that's what we'll focus
 on.
 
+### Passenger
+
 Because nginx doesn't have a loadable module feature like Apache, when you want to add a new
 module to nginx, you have to re-compile it from source with the module's code. Luckily,
 Passenger automates most of this process for you and will even download the nginx source code
@@ -264,6 +266,74 @@ enables you to completely remove it by simply removing that one directory.
 Press the Enter key to continue with the default prefix and Passenger will
 begin the automated compilation and installation steps. This should take a couple
 minutes.
+
+
+After a bunch of text flies by, you sould eventually be greeted with with a message
+that nginx completed successfully:
+
+    Nginx with Passenger support was successfully installed.
+
+    The Nginx configuration file (/opt/nginx/conf/nginx.conf)
+    must contain the correct configuration options in order for Phusion Passenger
+    to function correctly.
+
+    This installer has already modified the configuration file for you! The
+    following configuration snippet was inserted:
+
+      http {
+          ...
+          passenger_root /var/lib/gems/1.9.1/gems/passenger-3.0.17;
+          passenger_ruby /usr/bin/ruby1.9.1;
+          ...
+      }
+
+    After you start Nginx, you are ready to deploy any number of Ruby on Rails
+    applications on Nginx.
+
+    Press ENTER to continue.
+
+Press Enter to get additional setup information and be brought back to your prompt.
+
+Now, we configure nginx to serve your application.
+
+### nginx
+
+nginx is the actual webserver. It's a piece of software that speaks HTTP, is
+very high performance and sits between your application and the internet. Although
+Passenger is capable of serving all content associated to your application, there's
+no reason to re-invent the wheel and implement all of the features that nginx has.
+
+When you host a Rack application (such as Sinatra or Rails) in Passenger, on nginx,
+your application will handle requests that it's configured to handle and nginx
+will serve up any static content without going through your application. Static
+content is considered to be any content that you can see on the filesystem
+in your app's public folder. Content that is served directly from the harddrive,
+to the internet at large.
+
+The way that Passenger works is it starts up several "handlers" for your application.
+That is, there will be several instances of your app running independently and
+Passenger will hand off requests to these instances in a cycle. By doing this, it
+ensures that each instance of your app is only handling a single request at a time
+and it keeps things as simple as possible, which is good for avoiding bugs. If
+more requests come in than your handlers can accept, passenger will worry about
+placing the requests in a queue so clients don't get rejected. All of this happens
+transparently to your application, so, as a developer, you don't have to think
+about this stuff.
+
+nginx is capable of serving this content much faster than your app and won't tie
+up handlers in the process.
+
+nginx also has a feature that it supports called Virtual Hosts, or "vhosts". When a
+request comes in via http, a header in the request indicates what hostname the
+request is intended for.
+
+An example of this is where you have a single server, but you want to host differnet
+content for flatironschool.com, students.flatironschool.com and mysite.com. By
+looking at the request header, nginx can use different rules for serving the content,
+pointing to different directories, logging things differently or denying access
+based on login credentials or the requester's IP address.
+
+For your application, we'll set up a vhost for your site.
 
 
  * set up passenger/nginx
