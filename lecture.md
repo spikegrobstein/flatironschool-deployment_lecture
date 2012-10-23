@@ -109,7 +109,8 @@ additional automation in the form of package managers and pre-compiled applicati
 run, without modification, on that particular distibution.
 
 The first large distribution (or distro) was RedHat, which, currently, is making over $1 Billion
-in revenue per year. Due to the success of RedHat, other companies have cropped up, either making
+in revenue per year. Although Linux is free, companies, such as RedHat make money selling services
+and support for it. Due to the success of RedHat, other companies have cropped up, either making
 their own distros or modifying existing ones and releasing it under their name.
 
 Some other examples of Linux distros are:
@@ -125,7 +126,6 @@ In this lecture, we're going to focus on Ubuntu, which is my favourite distro an
 most popular right now.
 
  * connecting to the server for the first time.
-
  * Creating your app's user
 
 ## Getting the server ready for your application
@@ -156,7 +156,7 @@ First, we'll install the `build-essential` package:
 
 Then install the various Ruby packages:
 
-    sudo apt-get install ruby19 ruby19-dev rubygems ri rdoc
+    sudo apt-get install ruby1.9.3 rubygems ri rdoc
 
 Then install our database server, PostgreSQL:
 
@@ -196,11 +196,75 @@ into locations that may not be writable by an under-privilaged user:
 
     sudo passenger-install-nginx-module
 
-This will output something like the following:
+This will start the automated Passenger installer. First it will explain what it's going to do,
+then it will do a verification phase to make sure we have all of the correct libraries installed:
 
-    INSERT OUTPUT HERE
+    Checking for required software...
 
-We will fill it out... INSERT MORE INSTRUCTIONS
+     * GNU C++ compiler... found at /usr/bin/g++
+     * The 'make' tool... found at /usr/bin/make
+     * A download tool like 'wget' or 'curl'... found at /usr/bin/wget
+     * Ruby development headers... found
+     * OpenSSL support for Ruby... found
+     * RubyGems... found
+     * Rake... found at /usr/local/bin/rake
+     * rack... found
+     * Curl development headers with SSL support... not found
+     * OpenSSL development headers... not found
+     * Zlib development headers... not found
+
+    Some required software is not installed.
+    But don't worry, this installer will tell you how to install them.
+
+It turns out that we didn't install all of the correct packages. Pressing the Enter key will
+prompt passenger to display instructions for what to do next. We can install all the required
+packages with a single command:
+
+    sudo apt-get install libcurl4-openssl-dev libssl-dev zlib1g-dev
+
+And then run the `passenger-install-nginx-module` again. This time, it will confirm
+that all necessary packages are installed and it will guide you through the steps
+to install nginx with the Passenger module:
+
+    Nginx doesn't support loadable modules such as some other web servers do,
+    so in order to install Nginx with Passenger support, it must be recompiled.
+
+    Do you want this installer to download, compile and install Nginx for you?
+
+     1. Yes: download, compile and install Nginx for me. (recommended)
+        The easiest way to get started. A stock Nginx 1.2.3 with Passenger
+        support, but with no other additional third party modules, will be
+        installed for you to a directory of your choice.
+
+     2. No: I want to customize my Nginx installation. (for advanced users)
+        Choose this if you want to compile Nginx with more third party modules
+        besides Passenger, or if you need to pass additional options to Nginx's
+        'configure' script. This installer will  1) ask you for the location of
+        the Nginx source code,  2) run the 'configure' script according to your
+        instructions, and  3) run 'make install'.
+
+    Whichever you choose, if you already have an existing Nginx configuration file,
+    then it will be preserved.
+
+    Enter your choice (1 or 2) or press Ctrl-C to abort: 
+
+We will choose 1 since we don't need to do anything advanced. Type a '1' and press
+enter. Passenger will then download and unpack nginx and prompt you for a location
+to install it.
+
+We'll use the default prefix of `/opt/nginx` for installing our application.
+
+A prefix is a base path for where to install a series of files. When installing,
+no directories will be overwritten, but if you choose a non-existent path, it will
+be created for you. For example, if you were to install nginx to `/`, or the "root
+filesystem" rather than `/opt/nginx`, nginx files would be mixed into the rest of
+your Linux install and would be more difficult to remove. Installing it in `/opt/nginx`
+enables you to completely remove it by simply removing that one directory.
+
+Press the Enter key to continue with the default prefix and Passenger will
+begin the automated compilation and installation steps. This should take a couple
+minutes.
+
 
  * set up passenger/nginx
    * point it to the right place
