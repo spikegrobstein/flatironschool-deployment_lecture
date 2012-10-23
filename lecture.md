@@ -31,23 +31,32 @@ and sharing resources such as RAM, disk and network. Most modern CPUs contain en
 enable near-native performance in the virtualized environments for many tasks. A single
 virtualized environment is called a virtual machine or VM.
 
-Of course, there can be contention with regard to IO resources such as network and disk when
-multiple VMs ont he same hardware are fighting for access, but overall, the benefits outweigh
-the problems if properly managed.
+A physical piece of hardware has various limits in terms of what kind of input and output it
+can handle. A given processor can only run so many instructions per second, a hard disk can
+only spin so fast and read and write at a maximum rate (known as IO or input/output),
+and a network interface can only send or recieve so much data per second. When it comes to
+virtualization, a single physical computer can be running many virtual machines and because of
+this, it can lead to competition when accessing these resources.
 
-When it comes to VMs, many of the resources are also virtualized, so that the network interfaces,
+For example, on a single piece of hardware with 4 virtual machines, if they all try to read
+from different parts of the disk at th same time, that can lead to something known as read
+contention. A harddrive is made up of spinning platters with an arm on it that seeks to 
+different positions to read and write data, so if it tries to read from different places
+on the disk at the same time, each concurrent read will slow down.
+
+A properly managed virtual infrastructure will have multiple disks with special hardware to
+enable acceptable performance under these conditions and mitigate IO contention. Also, when
+it comes to these VMs, many of the resources are also virtualized, so that the network interfaces,
 for instance, actually show up as separate devices to the rest of the network even though there
-is only a single, physical device. Disk devices are also virtualized and there are vendors who
-provide products that are designed to be virtualized and can provision disks with guaranteed
-throughput to your VMs, mitigating issues with fighting for those resources during high load.
+is only a single, physical device.
 
 #### Why is it so great?
 
 Virtualization has been around for a long time, but it wasn't until recently that the
-applications for it became viable for the masses. With the advent of VMWare's commercial products
-in the enterprise and Xen, which is an official Linux kernel addition and allowed Amazon to
-create their EC2 cloud offering, getting your app up and running on the public internet is
-faster, cheaper and easier than ever.
+applications for it became viable for the masses. With the advent of inexpensive, high-performance
+and multi-core CPUs, VMWare's commercial products in the enterprise and Xen, which is one (of many)
+official Linux kernel addition, has allowed Amazon to create their EC2 cloud offering, so getting your
+app up and running on the public internet is faster, cheaper and easier than ever.
 
 In the past, if one wanted to host their website, they had to go to a cheap shared host, where they
 may have been heavily restricted in what they could run or get a dedicated server which typically
@@ -77,7 +86,44 @@ administration and quality of service.
 
  * Signing up for Linode
  * choosing the correct server size
- * chosing your Linux distribution
+
+## Choosing your Linux Distribution
+
+Linux is a wildly popular, open-source operating system that was originally written by Linus
+Torvalds (also the creator of Git). Because of the varying ways that people use Linux and
+because it's so customizable, this has lead to an incredible selection of distributions of
+Linux.
+
+### What's a distribution?
+
+When Linux was first released and began mass adoption, there was no easy way to install it. It
+required compiling your kernel from source with support for the specific hardware that you were
+running it on, including the vendor and model of your motherboard, CPU, video card, network card,
+and many other pieces of hardware hidden inside of your PC. Code that was compiled on one person's
+computer might not run on another person's due to them installing libraries in different locations
+in their filesystem.
+
+To solve this, various users and various companies started pre-packaging Linux installers into
+their own distribution. This began to standardize the layout of the filesystems and also led to
+additional automation in the form of package managers and pre-compiled applications that would
+run, without modification, on that particular distibution.
+
+The first large distribution (or distro) was RedHat, which, currently, is making over $1 Billion
+in revenue per year. Due to the success of RedHat, other companies have cropped up, either making
+their own distros or modifying existing ones and releasing it under their name.
+
+Some other examples of Linux distros are:
+
+ * Gentoo
+ * Debian
+ * Ubuntu (based on Debian)
+ * Slackware
+ * CentOS (based on RedHat)
+ * Suse
+
+In this lecture, we're going to focus on Ubuntu, which is my favourite distro and also one of the
+most popular right now.
+
  * connecting to the server for the first time.
 
  * Creating your app's user
