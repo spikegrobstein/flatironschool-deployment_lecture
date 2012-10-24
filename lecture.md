@@ -182,10 +182,82 @@ away. Because of this, it's usually considered bad practise to use this account 
 regular basis and we will create an "unpriviledged user" for our application to run as and for you
 to connect as to do everything.
 
+Using the IP that Dediserve displayed in their dashboard after you created your VM, let's connect
+to our fresh server instance. To do this, we use the `ssh` command in the Terminal on your local
+development machine:
+
+    ssh root@XXX.XXX.XXX.XXX
+
+Replace `XXX.XXX.XXX.XXX` with the IP for your machine.
+
+You should see something like the following:
+
+    The authenticity of host '96.8.123.64 (96.8.123.64)' can't be established.
+    RSA key fingerprint is 22:fb:91:18:d0:98:ee:e6:c7:77:ae:fa:55:8c:3a:08.
+    Are you sure you want to continue connecting (yes/no)?
+
+The server will provide a unique identifier to you which identifies the server, known as its
+"SSH Fingerprint." This is used to ensure that you're connecting to the server that you expect
+to connect to. We're not going to worry about verifying this fingerprint right now as we're only
+concerned about connecting to the machine.
+
+Type `yes` and press enter and you will be prompted for the root password for the machine. Type
+that in and you'll be presented with a prompt. It should look something like this:
+
+    root@spike001:~#
+
+Congrats! You've just connected to your own server! Now, to make a user for you and your app.
+
 #### Creating your own user
 
- * connecting to the server for the first time.
- * Creating your app's user
+Creating your own user is done using the `useradd` command. This command has a whole slew of
+options that it accepts for customizing your user, but that's beyond the scope of this lecture.
+You can get a full list of all of the options by typing the following into your ssh session:
+
+    useradd --help
+
+The settings that we're most interested in are as follows:
+
+ * `-s <shell>` -- the shell that is assigned to this user.
+ * `-G <groups>` -- any security groups to which this user belongs.
+ * `-m` -- to ensure that the home directory is created
+
+Your shell is the commandline interface that you interact with when logging into your server.
+There are a lot of different shells available including `sh`, `zsh` and `tcsh` in addition to
+`bash`, which is one of the most common and my personal favourite.
+
+We will add your user to the `sudo` group. Sudo is a command that allows you to temporarily
+raise your priviledge level to that of the root user (or, any other user, depending on the
+configuration of the server) without actually logging in as root. Most Linux distributions ship
+with the root user disabled and have you create an administrator user which has sudo access for
+security purposes. On servers with multiple administrators, using sudo allows much finer-grained
+controls for access to the machine without needing to share the root password.
+
+By adding your user to the `sudo` group, it allows your new user to run commands with increased
+priviledges.
+
+To create your user type the following command:
+
+    useradd -s /bin/bash -G sudo -m USERNAME
+
+Replace `USERNAME` with the name of your user.
+
+Next, you want to create a password for your user, so run the following command:
+
+    passwd USERNAME
+
+Again, replace `USERNAME` with the name of your user.
+
+You will be prompted for the new user's password, so choose one, type it and press enter. Then
+type it again to confirm.
+
+You should now be able to log into your server as your new user, so disconnect by typing `exit`,
+which brings you back to your local machine's prompt, and re-connect using the following command:
+
+    ssh USERNAME@XXX.XXX.XXX.XXX
+
+Replace `USERNAME` and `XXX.XXX.XXX.XXX` with your new username and server's IP and you should
+be prompted for your password. Type that in and you're in as yourself!
 
 ### Getting the server ready for your application
 
@@ -209,7 +281,7 @@ to various FTP servers, fetch each software package and compile it from source, 
 on how many packages you need and how much information you have up front, could take days. With
 `apt-get`, we'll be done in about 2 minutes.
 
-First, we'll install the `build-essential` package:
+The first package to install is the `build-essential` package:
 
     sudo apt-get install build-essential
 
