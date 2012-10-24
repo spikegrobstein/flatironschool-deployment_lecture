@@ -170,6 +170,20 @@ display what the IP of the machine is.
 
 ### Connecting to your server for the first time
 
+We will use SSH to connect to our server. SSH stands for Secure SHell and is a way to remotely
+administer a server via the commandline. Once connected, you can navigate the server's filesystem,
+start and stop services and run scripts just like you were on your local machine, only everything
+you're doing is on the remote VM.
+
+When configuring your machine, Dediserve created a root user for you. Also known as the superuser,
+the root user has full access to everything and it isn't restricted by permissions in the same
+ways that a regular user would be. It's a full administrator and those rights cannot be taken
+away. Because of this, it's usually considered bad practise to use this account to log in on a
+regular basis and we will create an "unpriviledged user" for our application to run as and for you
+to connect as to do everything.
+
+#### Creating your own user
+
  * connecting to the server for the first time.
  * Creating your app's user
 
