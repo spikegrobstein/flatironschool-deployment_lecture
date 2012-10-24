@@ -87,7 +87,7 @@ administration and quality of service.
  * Signing up for Linode
  * choosing the correct server size
 
-## Choosing your Linux Distribution
+### Choosing your Linux Distribution
 
 Linux is a wildly popular, open-source operating system that was originally written by Linus
 Torvalds (also the creator of Git). Because of the varying ways that people use Linux and
@@ -125,10 +125,55 @@ Some other examples of Linux distros are:
 In this lecture, we're going to focus on Ubuntu, which is my favourite distro and also one of the
 most popular right now.
 
+### Creating your server
+
+We're going to be using Dediserve.com to host our application. Dediserve has been nice enough to
+supply us with a pool of resources that we can use to create servers as we need for this class
+and they have an easy to use dashboard for creating and managing our servers.
+
+To start, we need to get logged in and create our node. Once there we can choose from various
+options for what resources will be available for our server. The great thing about virtualization
+over physical hardware is that we have full control over our resource limits. We can define
+exactly how much memory, disk and CPU is available to it and also choose from a variety of
+Linux distributions, all using software, and without the need to physically install any hardware.
+
+For this class, we'll be creating our nodes with the following settings:
+
+ * Ubuntu Linux 12.04 x64
+ * 2GB of RAM
+ * 2 CPUs
+ * 16GB Disk
+ * 2GB Swap
+
+The memory and disk sizes may seam small to you, considering that most of your phones probably
+have more capacity, but when it comes to running a server, without a graphical interface and
+without media files such as video or MP3s, the need for large amounts of storage is drastically
+reduced.
+
+Ubuntu numbers their releases in the form of YEAR.MONTH and they have 2 releases per year; one
+in April and one in October. We'll be installing the 64-bit version of this previous April's
+release of Ubuntu on our machine.
+
+The 2GB of swap refers to a special area of disk that is used to store data when memory runs
+low. This way, if your application exhausts the 2GB of RAM that we've allocated, it won't cause
+the machine to completely fail, but rather, the operating system will offload some of the less
+frequently accessed data to swap to make room for new data. Because the swap is located on disk,
+it's much slower to access than when it's in RAM. Also, when things are transfered in and
+out of swap, it can slow things down, but overall, it's better for the system.
+
+You should adjust the sliders and choose from the menues in the form to match the above settings
+and choose a name for your server and a password. These are both arbitrary, but don't forget the
+password.
+
+After a couple of minutes, the server will be available to you to connect to and Dediserve will
+display what the IP of the machine is.
+
+### Connecting to your server for the first time
+
  * connecting to the server for the first time.
  * Creating your app's user
 
-## Getting the server ready for your application
+### Getting the server ready for your application
 
 Now that you have a server and you can connect to it, it's time to prep it so you can run your
 application on it.
