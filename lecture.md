@@ -730,15 +730,6 @@ looking at the request header, nginx can use different rules for serving the con
 pointing to different directories, logging things differently or denying access
 based on login credentials or the requester's IP address.
 
-Let's set up the vhost for our application.
-
-
-
-
- * set up passenger/nginx
-   * point it to the right place
- * set up production database
-
 ## Once you're up and running
 
 Following are some topics that need to be mentioned, but are beyond the scope of this lecture.
