@@ -340,7 +340,19 @@ The Passenger gem installs all of the helper applications and scripts for instal
 as an Apache or nginx module. Since we're going to run this in nginx, that's what we'll focus
 on.
 
-### Passenger
+## Deployment
+
+### Capistrano
+
+ * getting capified
+ * how Capistrano deploys
+ * doing your first deploy
+   * cap deploy:setup
+   * cap deploy
+ * verify that the app is working
+
+
+## Passenger
 
 Because nginx doesn't have a loadable module feature like Apache, when you want to add a new
 module to nginx, you have to re-compile it from source with the module's code. Luckily,
@@ -450,7 +462,7 @@ Press Enter to get additional setup information and be brought back to your prom
 
 Now, we configure nginx to serve your application.
 
-### nginx
+## nginx
 
 nginx is the actual webserver. It's a piece of software that speaks HTTP, is
 very high performance and sits between your application and the internet. Although
@@ -477,6 +489,65 @@ about this stuff.
 nginx is capable of serving this content much faster than your app and won't tie
 up handlers in the process.
 
+### Configuring nginx
+
+nginx's configuration files are plain text and live at `/opt/nginx/conf`. We'll use
+`vim` to edit them. To edit the primary nginx config file (`nginx.conf`) run the
+following command:
+
+    sudo vim /opt/nginx/conf/nginx.conf
+
+This will open up the vim editor and you can start editing.
+
+The nginx config format is easy to read and is structured with blocks of
+configuration surrounded by braces ({}). Each line of configuration is terminated with
+a semi-colon (;) and comments are denoted with a hash (#) like in Ruby.
+
+The first thing we need to do is make it so nginx runs as an unprivilaged user. On
+Ubuntu systems, the typical webserver user is `www-data`. At the top of the file
+is a commented out line:
+
+    #user  nobody;
+
+We want to un-comment it and change the user to be `www-data` so it matches the
+following:
+
+    user www-data;
+
+Passenger has already partially configured nginx for us, but it's not quite configured
+for serving our application, yet. We first need to point the "document root" to our
+application and enable Passenger for it.
+
+Document root is the base location that nginx will serve your content. Any requests
+to your website will be served relative to this path and nothing outside of it will
+be publically accessible. In Rack apps (eg: Rails and Sinatra), this should be pointed
+to your `public` directory. Although your actual code lives outside of the `public`
+directory, Passenger will be able to handle requests properly and nginx will serve
+any static content located inside this directory.
+
+To configure nginx to serve your app, ocate the `location` block in the config file,
+which looks like:
+
+    location / {
+      root   html;
+      index  index.html index.htm;
+    }
+
+Delete the whole block and replace it with the following 2 lines:
+
+    root /home/USERNAME/APPNAME/current/public;
+    passenger_enabled on;
+
+Replace `USERNAME` and `APPNAME` with your username and the name of your application
+respectively. Don't forget the semi-colons.
+
+The `passenger_enabled on;` line tells nginx to use Passenger when serving content
+at this location.
+
+That's it! You can now exit the editor and we can move on to the next step.
+
+
+
 #### Virtual Hosts
 
 nginx also has a feature that it supports called Virtual Hosts, or "vhosts". When a
@@ -490,23 +561,14 @@ looking at the request header, nginx can use different rules for serving the con
 pointing to different directories, logging things differently or denying access
 based on login credentials or the requester's IP address.
 
-For your application, we'll set up a vhost for your site.
+Let's set up the vhost for our application.
+
+
 
 
  * set up passenger/nginx
    * point it to the right place
  * set up production database
-
-## Deployment
-
-### Capistrano
-
- * getting capified
- * how Capistrano deploys
- * doing your first deploy
-   * cap deploy:setup
-   * cap deploy
- * verify that the app is working
 
 ## Once you're up and running
 
