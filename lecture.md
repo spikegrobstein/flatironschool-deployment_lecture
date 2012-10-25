@@ -670,6 +670,51 @@ at this location.
 
 That's it! You can now exit the editor and we can move on to the next step.
 
+### Starting nginx
+
+nginx can be started and stopped all through the `/opt/nginx/sbin/nginx` command.
+In order to reduce typing, we're going to create a symlink to it in a place that
+will allow us to call just `nginx`.
+
+Unix-like systems (like OSX and Linux) have a thing called the `PATH` which is a series
+of places that it searches when you type a command on the commandline. Such locations
+include `/bin`, `/usr/bin` and `/sbin`. You can inspect your current path by typing:
+
+    printenv PATH
+
+into your console. It should return something like the following:
+
+    /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+
+which is a colon-delimited list of the places it will check, in order.
+
+We're going to place the symlink to nginx in `/usr/local/sbin` since the `/usr/local`
+namespace is, by convention, the location that administrators should put any
+programs that isn't installed by a package manager, directly.
+
+We do this with the following command:
+
+    sudo ln -s /opt/nginx/sbin/nginx /usr/local/sbin/
+
+Now, if we type `nginx -h`, it will spit out the usage for the nginx command.
+
+To start nginx, run the following command:
+
+    sudo nginx
+
+It should immediately return you to your prompt. When you start nginx, it spawns a server
+process in the background so you can continue doing other things on the server. It will
+continue to run in the background until you stop it or reboot the server.
+
+To stop nginx, you send it a "stop" signal using the `-s` switch:
+
+    sudo nginx -s stop
+
+And that's it. Once it's running, you should be able to access your application by going to:
+
+    http://YOUR-IP
+
+in a web browser.
 
 
 #### Virtual Hosts
