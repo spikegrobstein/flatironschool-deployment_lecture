@@ -281,17 +281,41 @@ to various FTP servers, fetch each software package and compile it from source, 
 on how many packages you need and how much information you have up front, could take days. With
 `apt-get`, we'll be done in about 2 minutes.
 
+Before we start installing packages, we need to make sure that the apt repositories and all
+installed packages are up to date. This is equivalent to checking for updates, then installing
+all system updates.
+
+Run the following command to update the apt repository:
+
+    sudo apt-get update
+
+Then upgrade all installed packages:
+
+    sudo apt-get upgrade
+
+Press enter when prompted to confirm the packages to update. Any time apt is going to install
+more than the program you selected, due to dependencies, it will confirm with you before
+continuing. Pressing enter or typing 'Y' and pressing enter will kick the install proces off.
+
+At this point, we're ready to start installing all of our necessary packages.
+
 The first package to install is the `build-essential` package:
 
     sudo apt-get install build-essential
 
 Then install the various Ruby packages:
 
-    sudo apt-get install ruby1.9.3 rubygems ri rdoc
+    sudo apt-get install ruby1.9.3
+
+We also need to install git (for deploying our app):
+
+    sudo apt-get install git
 
 Then install our database server, PostgreSQL:
 
-    sudo apt-get install postgresql-server-9.1
+    sudo apt-get install postgresql-9.1
+
+We'll set up the database in a bit.
 
 You may have noticed that we haven't installed a webserver for our application; you'll see why
 in the next section.
@@ -398,7 +422,6 @@ Press the Enter key to continue with the default prefix and Passenger will
 begin the automated compilation and installation steps. This should take a couple
 minutes.
 
-
 After a bunch of text flies by, you sould eventually be greeted with with a message
 that nginx completed successfully:
 
@@ -454,9 +477,12 @@ about this stuff.
 nginx is capable of serving this content much faster than your app and won't tie
 up handlers in the process.
 
+#### Virtual Hosts
+
 nginx also has a feature that it supports called Virtual Hosts, or "vhosts". When a
 request comes in via http, a header in the request indicates what hostname the
-request is intended for.
+request is intended for. The term "Virtual Host" is independent of our virtual
+machine and applies to any hostname-based request routing.
 
 An example of this is where you have a single server, but you want to host differnet
 content for flatironschool.com, students.flatironschool.com and mysite.com. By
