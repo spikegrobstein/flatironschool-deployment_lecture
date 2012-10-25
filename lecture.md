@@ -19,6 +19,10 @@ application, install your database software, and deploy the app. From there, you
 to update your application on the server to fix bugs or add features in a way that allows you
 to roll back your code in the case of a show-stopping bug.
 
+Slides are available at:
+
+https://docs.google.com/presentation/d/1im8r0XhOls8sWNNWIU4KE7KWkVAO-9BphknClCxZ68s/edit
+
 ## Going from development to production
 
 ### Virtualization
