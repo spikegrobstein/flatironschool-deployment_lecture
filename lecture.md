@@ -305,17 +305,13 @@ The first package to install is the `build-essential` package:
 
 Then install the various Ruby packages:
 
-    sudo apt-get install ruby1.9.3
+    sudo apt-get install ruby1.9.3 sqlite3 libsqlite3-ruby libsqlite3-dev
+
+That installs Ruby and the sqlite3 libraries required to install the sqlite3 gem.
 
 We also need to install git (for deploying our app):
 
     sudo apt-get install git
-
-Then install our database server, PostgreSQL:
-
-    sudo apt-get install postgresql-9.1
-
-We'll set up the database in a bit.
 
 You may have noticed that we haven't installed a webserver for our application; you'll see why
 in the next section.
@@ -332,6 +328,10 @@ We'll be running our application in Passenger, which is a Rack appserver that ac
 for nginx, a high-performance, evented webserver which is quickly catching up to Apache as
 the number one Linux webserver and is the goto webserver for Rails deployments and admins.
 
+We then need to install the `sqlite3` gem:
+
+    sudo gem install sqlite3 sinatra
+
 To install Passenger, first we install the gem:
 
     sudo gem install passenger
@@ -344,12 +344,136 @@ on.
 
 ### Capistrano
 
- * getting capified
- * how Capistrano deploys
- * doing your first deploy
-   * cap deploy:setup
-   * cap deploy
- * verify that the app is working
+Capistrano is a tool which executes commands on multiple remote servers, concurrently, and is
+primarily used for deploying applications. That's what we're going to use it for today.
+
+In order to use Capistrano, you must first install the `capistrano` gem. This is done with
+the following command on your local machine:
+
+    gem install capistrano
+
+Capistrano does not require anything to be installed on your server except for SSH. The gem
+makes 2 commands available to you:
+
+ * `capify` which is used to prepare your application to be deployed using Capistrano.
+ * `cap` for deploying your application.
+
+To get started, in your Terminal, `cd` into your application's directory and type:
+
+    capify .
+
+This creates a `Capfile` and creates a directory called `config` which contains `deploy.rb`.
+The `Capfile` is the entrypoint for `cap` to access its configuration.
+
+We are going to edit the `config/deploy.rb` file to enable deployment of our application.
+The file should look as follows:
+
+    set :application, "studentbody"
+    set :repository,  "GITHUB_REPOSITORY"
+
+    set :user, 'USERNAME'
+    set :deploy_to, "/home/#{ user }/#{ application }"
+    set :use_sudo, false
+
+    set :scm, :git
+
+    default_run_options[:pty] = true
+
+    role :web, "96.8.123.64"                          # Your HTTP server, Apache/etc
+    role :app, "96.8.123.64"                          # This may be the same as your `Web` server
+
+    # if you want to clean up old releases on each deploy uncomment this:
+    # after "deploy:restart", "deploy:cleanup"
+
+    # if you're still using the script/reaper helper you will need
+    # these http://github.com/rails/irs_process_scripts
+
+    # If you are using Passenger mod_rails uncomment this:
+    namespace :deploy do
+     task :start do ; end
+     task :stop do ; end
+     task :restart, :roles => :app, :except => { :no_release => true } do
+       run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
+     end
+    end
+
+Capistrano has a very declaritive syntax, but it's all Ruby. It first defines some variables
+using the `set` function. The first parameter is the name of the variable and the second is
+the value.
+
+We set the following variables:
+
+ * `application` -- the name of our application; used in the `deploy_to` variable
+ * `repository` -- the URL for the repository on github. Replace this with yours
+ * `deploy_to` -- the location on the remote server that we will deploy the application
+ * `use_sudo` -- we set this to false because we are deploying to a location that our user owns
+ * `user` -- the user that we are deploying as. This should be the username you chose for your
+ user when setting up the server.
+ * `scm` -- this is set to the source-code-management system we're using, `:git`
+
+We then have to set `default_run_options[:pty] = true`. This is done because on some servers,
+Capistrano doesn't interact with the shell properly. In our case, this is necessary is is not
+there by default.
+
+We then define 2 roles using the `role` function. Capistrano has a concept of roles so you may
+have appservers, which serve the app, but web servers which handle the requests and a separate
+`db` server with your database. In our case, we're running on one server, so we need to define
+both the `web` and `app` roles with our server's IP.
+
+We also uncomment the `:deploy` namespace. Capistrano is a task-oriented application. Various
+tasks are defined internally, and you can define your own tasks using the `task` method. These
+tasks that we just uncommented are for starting, stopping and restarting our application via
+the Passenger interface. The `task` system is very robust and is a large enough topic to cover
+an entire class, so we won't go into detail here.
+
+Ensure that `Capfile` and `config/deploy.rb` are both added to your git repository and committed.
+
+### Setting up the app to run on the server
+
+In order for the application to run on the server, it needs a special configuration file called
+a "Rackup file." This file describes how to launch your application and where everything lives
+that it needs.
+
+Create a new file in the root of your app and call it `config.ru`. It should contain the
+following data:
+
+    require './studentbody'
+    run StudentBody.new
+
+This will require your `studentbody.rb` file which contains your Sinatra application and start
+it up. Passenger requires this file in order to be able to run your application.
+
+Make sure this file is also added to git and committed.
+
+### Preparing the deployment
+
+Capistrano has a full deployment framework built in and with the above configuration, it has
+enough information to deploy your app. The first thing we need to do is ensure that the
+file structure exists on your server by running the built-in `deploy:setup` task.
+
+From your local machine, in your application's directory, run the following command:
+
+    cap deploy:setup
+
+This will connect to your server, prompt for your password and create the necessary folder
+structure exists on the server. It will spit out all the actions that it's executing on the
+server and when it's done, you'll be brought back to your prompt.
+
+Capistrano's directory structure is pretty simple:
+
+    /home/USERNAME/studentbody/
+      releases/
+      shared/
+
+When you deploy, it makes a copy of your git repository into a timestamped directory in the
+`releases` directory. It then creates a symbolic link (or a symlink) to that new release,
+inside your applicaiton's directory, calling it `current`. What this enables you to do is
+release updates to your code, but retain older versions on the server. In the event that you
+need to revert to an older version, it becomes easy and you also have a record of what's been
+deployed in the past and when it was deployed.
+
+Capistrano deploys your code right from Github, so you have to make sure that you've pushed
+all of your changes before doing a deploy.
 
 
 ## Passenger
