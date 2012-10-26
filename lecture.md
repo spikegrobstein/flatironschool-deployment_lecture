@@ -475,6 +475,10 @@ deployed in the past and when it was deployed.
 Capistrano deploys your code right from Github, so you have to make sure that you've pushed
 all of your changes before doing a deploy.
 
+Once your changes are pushed to Github, it is time to deploy with this simple command
+
+    cap deploy
+
 
 ## Passenger
 
