@@ -372,6 +372,8 @@ The `Capfile` is the entrypoint for `cap` to access its configuration.
 We are going to edit the `config/deploy.rb` file to enable deployment of our application.
 The file should look as follows:
 
+    require 'bundler/capistrano' # for bundler support
+
     set :application, "studentbody"
     set :repository,  "GITHUB_REPOSITORY"
 
@@ -429,6 +431,10 @@ tasks are defined internally, and you can define your own tasks using the `task`
 tasks that we just uncommented are for starting, stopping and restarting our application via
 the Passenger interface. The `task` system is very robust and is a large enough topic to cover
 an entire class, so we won't go into detail here.
+
+We also add a line to the top of `deploy.rb` to add support for Bundler. This will make sure that
+`bundle install` is called after each deploy so all necessary gems are available to your
+application.
 
 Ensure that `Capfile` and `config/deploy.rb` are both added to your git repository and committed.
 
