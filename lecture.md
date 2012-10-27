@@ -457,8 +457,14 @@ that it needs.
 Create a new file in the root of your app and call it `config.ru`. It should contain the
 following data:
 
-    require './studentbody'
-    run StudentBody.new
+  require 'rubygems'
+  require 'bundler'
+
+  Bundler.require
+
+  require './studentbody.rb'
+
+  run StudentBody
 
 This will require your `studentbody.rb` file which contains your Sinatra application and start
 it up. Passenger requires this file in order to be able to run your application.
