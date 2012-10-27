@@ -317,6 +317,16 @@ We also need to install git (for deploying our app):
 
     sudo apt-get install git
 
+And lastly, we need to install some XML libraries so we can use the Nokogiri gem. Because
+Nokogiri is compiled from C code and leverages 2 libraries: `libxml2` and `libxslt`, we need
+to ensure that the necessary header files are available. To install those packages, run the
+following command:
+
+    sudo apt-get install libxml2-dev libxslt1-dev
+
+Without those headers, you'll recieve an error from bundler when it tries to install the
+Nokogiri gem.
+
 You may have noticed that we haven't installed a webserver for our application; you'll see why
 in the next section.
 
