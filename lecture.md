@@ -489,6 +489,11 @@ Once your changes are pushed to Github, it is time to deploy with this simple co
 
     cap deploy
 
+A bunch of text will fly by and your application should be successfully deployed. Feel free
+to read through the output to see exactly what went on. Capistrano will print every command
+it runs on each server and prefix any line of output with the name of the server that it
+came from. In cases where you're deploying to multiple servers, this can aide you in tracking
+down errors that may crop up.
 
 ## Passenger
 
