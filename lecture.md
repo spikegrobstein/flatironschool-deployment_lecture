@@ -418,7 +418,7 @@ We set the following variables:
  * `scm` -- this is set to the source-code-management system we're using, `:git`
 
 We then have to set `default_run_options[:pty] = true`. This is done because on some servers,
-Capistrano doesn't interact with the shell properly. In our case, this is necessary is is not
+Capistrano doesn't interact with the shell properly. In our case, this is necessary and is not
 there by default.
 
 We then define 2 roles using the `role` function. Capistrano has a concept of roles so you may
