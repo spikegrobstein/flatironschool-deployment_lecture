@@ -160,11 +160,15 @@ low. This way, if your application exhausts the 2GB of RAM that we've allocated,
 the machine to completely fail, but rather, the operating system will offload some of the less
 frequently accessed data to swap to make room for new data. Because the swap is located on disk,
 it's much slower to access than when it's in RAM. Also, when things are transfered in and
-out of swap, it can slow things down, but overall, it's better for the system.
+out of swap, it can slow things down, but overall, it's better for the health of the system.
 
 You should adjust the sliders and choose from the menues in the form to match the above settings
 and choose a name for your server and a password. These are both arbitrary, but don't forget the
 password.
+
+The password you choose will be used for the `root` user, which is the default administrative
+user for the system. You should choose a secure and difficult to guess password even though this
+server will not be used for a production site. I'll get more into this, later.
 
 After a couple of minutes, the server will be available to you to connect to and Dediserve will
 display what the IP of the machine is.
@@ -251,6 +255,17 @@ Again, replace `USERNAME` with the name of your user.
 
 You will be prompted for the new user's password, so choose one, type it and press enter. Then
 type it again to confirm.
+
+Again, this password should be relatively secure and difficult to guess. It's ok to use the
+same password that you used for the `root` user when setting up the machine. The Internet is
+a dangerous place and there are automated attacks that scour the internet for vulnerabilities.
+One of the most common attacks that you'll see is ssh login attempts. Bots iterate over all
+the machines on the Internet, try to connect to ssh using a variety of common usernames (root,
+apache, test, etc) and attempt to use common passwords to log in. Looking at the logs of a
+server that's been online for any period of time will reveal thousands of failed login attempts.
+
+Because of that, choosing a secure password is very important and disabling the ability for root
+to log in should be one of the first things that you do after you create your own personal user.
 
 You should now be able to log into your server as your new user, so disconnect by typing `exit`,
 which brings you back to your local machine's prompt, and re-connect using the following command:
