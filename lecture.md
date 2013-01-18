@@ -275,6 +275,39 @@ which brings you back to your local machine's prompt, and re-connect using the f
 Replace `USERNAME` and `XXX.XXX.XXX.XXX` with your new username and server's IP and you should
 be prompted for your password. Type that in and you're in as yourself!
 
+### Disable root login via ssh
+
+Before we do anything, we're going to disable the ability for root to ssh into your machine.
+Doing this is a two-step process:
+
+ 1. Edit the `sshd_config` file to disallow root login
+ 2. Restart the `sshd` process to reload the configuration
+
+The `sshd_config` file lives in `/etc/ssh/sshd_config`, so we'll open that up in the
+command-line text editor. Because that is a system configuration file, you'll need to use `sudo`
+to edit that file with administrator priviledges:
+
+    sudo vim /etc/ssh/sshd_config
+
+Locate the line that reads:
+
+    PermitRootLogin yes
+
+and change it to read:
+
+    PermitRootLogin no
+
+After making that change, save the file and exit the text editor.
+
+Now, we'll restart the `sshd` process. This command also requires administrator priviledges, so
+we'll use `sudo`:
+
+    sudo /etc/init.d/ssh restart
+
+Now, if you try to log into the server as the `root` user, it will not let you and give you the
+impression that you've got the incorrect password. This is done to waste the time of the attacker
+rather than letting them know that their attempts are frivolous.
+
 ### Getting the server ready for your application
 
 Now that you have a server and you can connect to it, it's time to prep it so you can run your
