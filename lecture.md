@@ -88,9 +88,6 @@ There are a whole slew of providers out there. In this lecture, I'm going to tal
 provision a server on Linode, which, in my opinion is the right balance of price, ease of
 administration and quality of service.
 
- * Signing up for Linode
- * choosing the correct server size
-
 ### Choosing your Linux Distribution
 
 Linux is a wildly popular, open-source operating system that was originally written by Linus
