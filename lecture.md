@@ -171,7 +171,7 @@ user for the system. You should choose a secure and difficult to guess password 
 server will not be used for a production site. I'll get more into this, later.
 
 After a couple of minutes, the server will be available to you to connect to and Dediserve will
-display what the IP of the machine is.
+display the IP of the machine.
 
 ### Connecting to your server for the first time
 
