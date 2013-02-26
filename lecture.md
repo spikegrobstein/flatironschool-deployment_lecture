@@ -275,6 +275,10 @@ which brings you back to your local machine's prompt, and re-connect using the f
 Replace `USERNAME` and `XXX.XXX.XXX.XXX` with your new username and server's IP and you should
 be prompted for your password. Type that in and you're in as yourself!
 
+*Note: if your username on your local workstation is the same as your username on the new
+Dediserve system, you don't need to include it in the `ssh` command, so you can connect by
+simply typing `ssh XXX.XXX.XXX.XXX`. `ssh` will use your local username by default!*
+
 ### Disable root login via ssh
 
 Before we do anything, we're going to disable the ability for root to ssh into your machine.
