@@ -497,29 +497,6 @@ application.
 
 Ensure that `Capfile` and `config/deploy.rb` are both added to your git repository and committed.
 
-### Setting up the app to run on the server
-
-In order for the application to run on the server, it needs a special configuration file called
-a "Rackup file." This file describes how to launch your application and where everything lives
-that it needs.
-
-Create a new file in the root of your app and call it `config.ru`. It should contain the
-following data:
-
-  require 'rubygems'
-  require 'bundler'
-
-  Bundler.require
-
-  require './studentbody.rb'
-
-  run StudentBody
-
-This will require your `studentbody.rb` file which contains your Sinatra application and start
-it up. Passenger requires this file in order to be able to run your application.
-
-Make sure this file is also added to git and committed.
-
 ### Preparing the deployment
 
 Capistrano has a full deployment framework built in and with the above configuration, it has
