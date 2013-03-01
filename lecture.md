@@ -497,6 +497,77 @@ application.
 
 Ensure that `Capfile` and `config/deploy.rb` are both added to your git repository and committed.
 
+### SSH Keys and Github Private Repositories
+
+#### Generate your ssh keys
+
+In the event that you're deploying your application from a private Github repository,
+you'll need to generate what is called a "deploy key." Because the repository is not
+publicly available, your server needs a way to authenticate with Github to download your
+repository. Deploy keys enable this by allowing your Github to identify your server
+and process the deployment without you needing to type in your Github username and password.
+
+To do this, we'll generate they public/private key pair and post the public one in the
+project's settings on Github.
+
+To generate the keys, type the following command on your server:
+
+    ssh-keygen -t rsa -b 4096
+
+When running that command, `ssh-keygen` will prompt you for the location of the files and
+an optional password for the key. **Do not set a password on this key.** Doing so defeats
+the purpose of creating the key in the first place and you will be forced to type it
+every time you use the key. You can safely press enter to choose the defaults to each of the
+three questions.
+
+#### About ssh keys
+
+What the above options in the commandline mean are:
+
+ * create a key with the type of "RSA"
+ * make the key size 4096 bits
+
+RSA is a global standard for encryption and in very wide use. There are other types that you
+could use, but RSA is preferred by convention.
+
+A 4096 bit key is *very* strong. The filesize tradeoff for such a strong key is acceptible
+in today's age of ubiquitous broadband and high-speed servers and workstations. In the past
+days of dial-up internet connections, your typical key size would be 1024 bit or smaller since
+the keys are used when negotiating the initial connection and identifying the user, so having
+a larger key size would increase the amount of time it takes for the first connection. Today,
+this overhead is barely measureable.
+
+'ssh-keygen' will generate 2 files:
+
+ * `~/.ssh/id_rsa` -- your *private* RSA key
+ * `~/.ssh/id_rsa.pub` -- your *public* RSA key
+
+Your public key is ok to share and even publicly post. It's your public identity and what is
+used to verify that you are you when you use your private key. Your private key should not
+be transferred off your server or shared at any time. In the event that either key is lost,
+you should delete the other and generate new ones.
+
+#### Adding your key to Github
+
+Add your key to Github by going to your repository's page on Github and clicking the **Settings**
+link. In that screen, you'll see a link to **Deploy Keys**. Click that and click the
+**Add deploy key** button.
+
+On your server, you can dump the contents of `id_rsa.pub`, your public key, to the terminal
+by using the following command:
+
+    cat ~/.ssh/id_rsa.pub
+
+Then, using your mouse, select the entire key, including `ssh-rsa` at the beginning all the
+way through to your `username@host` comment at the end.
+
+You can then paste that into the **Key** field on Github and click **Add key** to add the
+key. You'll be prompted for your password, so enter that and you're ready to begin
+preparing your deployment!
+
+You don't need to fill in a Title for the key as Github will be smart and take your
+`username@host` part from the public key and use that as the title.
+
 ### Preparing the deployment
 
 Capistrano has a full deployment framework built in and with the above configuration, it has
