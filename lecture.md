@@ -421,7 +421,7 @@ makes 2 commands available to you:
  * `capify` which is used to prepare your application to be deployed using Capistrano.
  * `cap` for deploying your application.
 
-To get started, in your Terminal, `cd` into your application's directory and type:
+To get started, in your Terminal, `cd` into your repository's directory and type:
 
     capify .
 
@@ -574,7 +574,7 @@ Capistrano has a full deployment framework built in and with the above configura
 enough information to deploy your app. The first thing we need to do is ensure that the
 file structure exists on your server by running the built-in `deploy:setup` task.
 
-From your local machine, in your application's directory, run the following command:
+From your local machine, in your repository's directory, run the following command:
 
     cap deploy:setup
 
