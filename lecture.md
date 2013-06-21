@@ -84,14 +84,17 @@ any more about this.
 
 ## Provisioning your server
 
-There are a whole slew of providers out there. In this lecture, I'm going to talk about how to
-provision a server on Linode, which, in my opinion is the right balance of price, ease of
-administration and quality of service.
+There are a whole slew of providers out there, but in this lecture, I'm going to talk about how to
+provision a server on DigitalOcean. DO is a new cloud provider that makes it super-easy to create
+virtual servers, which they call "Droplets." They can be created and destroyed, booted up and
+shut down at will and this makes it easy to experiment with your personal app or scale to the
+demand of your production application.
 
 ### Choosing your Linux Distribution
 
 Linux is a wildly popular, open-source operating system that was originally written by Linus
-Torvalds (also the creator of Git). Because of the varying ways that people use Linux and
+Torvalds (also the creator of Git). It's used in everything from robots to DVD players, web
+servers to desktop computers. Because of the varying ways that people use Linux and
 because it's so customizable, this has lead to an incredible selection of distributions of
 Linux.
 
@@ -128,49 +131,57 @@ most popular right now.
 
 ### Creating your server
 
-We're going to be using Dediserve.com to host our application. Dediserve has been nice enough to
-supply us with a pool of resources that we can use to create servers as we need for this class
-and they have an easy to use dashboard for creating and managing our servers.
+We're going to be using DigitalOcean (DO) to host our application. DO has been nice enough to
+supply us with a pool of resources that we can use to create servers, which they call "Droplets,"
+as we need for this class and they have an easy to use dashboard for creating and managing
+our servers.
 
-To start, we need to get logged in and create our node. Once there we can choose from various
+To start, we need to get logged in and create our node and once there we can choose from various
 options for what resources will be available for our server. The great thing about virtualization
 over physical hardware is that we have full control over our resource limits. We can define
 exactly how much memory, disk and CPU is available to it and also choose from a variety of
 Linux distributions, all using software, and without the need to physically install any hardware.
 
+DO offers pre-sized machines with common increments of CPU, RAM and Disk, which allows you to
+more easily choose your server. Other providers may have sliders to choose exactly how much 
+CPU, RAM and Disk you have down to the MegaByte.
+
 For this class, we'll be creating our nodes with the following settings:
 
- * Ubuntu Linux 12.04 x64
- * 2GB of RAM
- * 2 CPUs
- * 16GB Disk
- * 2GB Swap
+ * Ubuntu Linux 12.04 x64 Server
+ * 512MB of RAM
+ * 1 CPU
+ * 20GB Disk
 
-The memory and disk sizes may seam small to you, considering that most of your phones probably
+The memory and disk sizes may seem small to you, considering that most of your phones probably
 have more capacity, but when it comes to running a server, without a graphical interface and
-without media files such as video or MP3s, the need for large amounts of storage is drastically
-reduced.
+without media files such as video or MP3s, the need for large amounts of memory and storage is
+drastically reduced.
 
 Ubuntu numbers their releases in the form of YEAR.MONTH and they have 2 releases per year; one
 in April and one in October. We'll be installing the 64-bit version of this previous April's
 release of Ubuntu on our machine.
 
-The 2GB of swap refers to a special area of disk that is used to store data when memory runs
-low. This way, if your application exhausts the 2GB of RAM that we've allocated, it won't cause
-the machine to completely fail, but rather, the operating system will offload some of the less
-frequently accessed data to swap to make room for new data. Because the swap is located on disk,
-it's much slower to access than when it's in RAM. Also, when things are transfered in and
-out of swap, it can slow things down, but overall, it's better for the health of the system.
+When creating your server, you will need to give it a unique name, which you will use to refer
+to it in the dashboard and the server will display that name on your prompt once you connect.
+It doesn't matter what you set this to as long as it's unique to the class and follows the same
+rules as domains: lowercase letters, numbers, dashes and periods. I typically choose `spike001`,
+but you can choose whatever you want.
 
-You should adjust the sliders and choose from the menues in the form to match the above settings
-and choose a name for your server and a password. These are both arbitrary, but don't forget the
-password.
+From there, select the size of the server, based upon the above specs. It will be the second-
+smallest one.
 
-The password you choose will be used for the `root` user, which is the default administrative
-user for the system. You should choose a secure and difficult to guess password even though this
-server will not be used for a production site. I'll get more into this, later.
+Next, choose the region you want to place the server. This is the physical location that this
+server will exist, so if you want, you can place it in San Francisco and run your application
+from the opposite coast.
 
-After a couple of minutes, the server will be available to you to connect to and Dediserve will
+Next, choose your Distibution; you will be selecting "Ubuntu 12.04 x64 Server" which is a recent
+release that is currently supported.
+
+You can now click "Create Droplet." Your `root` password and connecting information will be
+emailed to you.
+
+After a couple of moments, the server will be available to you to connect to and DO will
 display the IP of the machine.
 
 ### Connecting to your server for the first time
