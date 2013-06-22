@@ -6,6 +6,10 @@ All work is copyright &copy;2012-2013 Spike Grobstein and a license may be added
 
 Contact me for details or requests to publish or use these notes.
 
+At some point in the future, this may include additional lectures or more information and may not stick
+entirely to the subject of deployment, but may go more into administration of servers and other server-side
+software.
+
 ## Lectures where this was used
 
  * 2012/10/25
