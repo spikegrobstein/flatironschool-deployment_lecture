@@ -173,32 +173,33 @@ smallest one.
 
 Next, choose the region you want to place the server. This is the physical location that this
 server will exist, so if you want, you can place it in San Francisco and run your application
-from the opposite coast.
+from the opposite coast. For the purposes of this lecture, the location of the server does
+not matter.
 
 Next, choose your Distibution; you will be selecting "Ubuntu 12.04 x64 Server" which is a recent
 release that is currently supported.
 
-You can now click "Create Droplet." Your `root` password and connecting information will be
-emailed to you.
-
-After a couple of moments, the server will be available to you to connect to and DO will
-display the IP of the machine.
+You can now click "Create Droplet." After about a minute, you will receive an email from DO
+with information for logging into the computer. This includes the IP address of your machine
+and your `root` user's password.
 
 ### Connecting to your server for the first time
 
 We will use SSH to connect to our server. SSH stands for Secure SHell and is a way to remotely
 administer a server via the commandline. Once connected, you can navigate the server's filesystem,
 start and stop services and run scripts just like you were on your local machine, only everything
-you're doing is on the remote VM.
+you're doing is on this remote server.
 
-When configuring your machine, Dediserve created a root user for you. Also known as the superuser,
+#### What is root?
+
+When configuring your machine, DO created a root user for you. Also known as the superuser,
 the root user has full access to everything and it isn't restricted by permissions in the same
 ways that a regular user would be. It's a full administrator and those rights cannot be taken
 away. Because of this, it's usually considered bad practise to use this account to log in on a
-regular basis and we will create an "unpriviledged user" for our application to run as and for you
-to connect as to do everything.
+regular basis so we will create an "unpriviledged user" for our application to run as and for you
+to connect as to perform our administration.
 
-Using the IP that Dediserve displayed in their dashboard after you created your VM, let's connect
+Using the IP that DO displayed in their dashboard after you created your VM, let's connect
 to our fresh server instance. To do this, we use the `ssh` command in the Terminal on your local
 development machine:
 
@@ -212,13 +213,13 @@ You should see something like the following:
     RSA key fingerprint is 22:fb:91:18:d0:98:ee:e6:c7:77:ae:fa:55:8c:3a:08.
     Are you sure you want to continue connecting (yes/no)?
 
-The server will provide a unique identifier to you which identifies the server, known as its
+The server will provide a unique value to you which identifies the server, known as its
 "SSH Fingerprint." This is used to ensure that you're connecting to the server that you expect
 to connect to. We're not going to worry about verifying this fingerprint right now as we're only
 concerned about connecting to the machine.
 
-Type `yes` and press enter and you will be prompted for the root password for the machine. Type
-that in and you'll be presented with a prompt. It should look something like this:
+Type `yes` and press enter and you will be prompted for the root password for the machine. Paste
+that in from the email and you'll be presented with your prompt. It should look something like this:
 
     root@spike001:~#
 
@@ -226,9 +227,14 @@ Congrats! You've just connected to your own server! Now, to make a user for you 
 
 #### Creating your own user
 
+Because we're going to disable remote login for the `root` user and we want this server to feel a
+little more personal, we're going to create a user for ouselves. This user will be able to perform
+administrative commands and will be how we connect to the server into the future.
+
 Creating your own user is done using the `useradd` command. This command has a whole slew of
 options that it accepts for customizing your user, but that's beyond the scope of this lecture.
-You can get a full list of all of the options by typing the following into your ssh session:
+If you're curious, you can get a full list of all of the options by typing the following into your
+ssh session:
 
     useradd --help
 
@@ -247,7 +253,7 @@ raise your priviledge level to that of the root user (or, any other user, depend
 configuration of the server) without actually logging in as root. Most Linux distributions ship
 with the root user disabled and have you create an administrator user which has sudo access for
 security purposes. On servers with multiple administrators, using sudo allows much finer-grained
-controls for access to the machine without needing to share the root password.
+controls for access to the machine without needing to share the `root` password.
 
 By adding your user to the `sudo` group, it allows your new user to run commands with increased
 priviledges.
@@ -256,19 +262,21 @@ To create your user type the following command:
 
     useradd -s /bin/bash -G sudo -m USERNAME
 
-Replace `USERNAME` with the name of your user.
+Replace `USERNAME` with the name of your user. Typically, I use my first name, but some people
+use first initial, last name or their handle (Twitter or GitHub username).
 
-Next, you want to create a password for your user, so run the following command:
+Next, because your user has no password set by default, you want to set a password for your
+user, so run the following command:
 
     passwd USERNAME
 
 Again, replace `USERNAME` with the name of your user.
 
 You will be prompted for the new user's password, so choose one, type it and press enter. Then
-type it again to confirm.
+type it again to confirm. When you type, the text will not be printed to the screen; in fact, no
+characters are printed to the screen, but rest assured, it's accepting the input.
 
-Again, this password should be relatively secure and difficult to guess. It's ok to use the
-same password that you used for the `root` user when setting up the machine. The Internet is
+This password should be relatively secure and difficult to guess. The Internet is
 a dangerous place and there are automated attacks that scour the internet for vulnerabilities.
 One of the most common attacks that you'll see is ssh login attempts. Bots iterate over all
 the machines on the Internet, try to connect to ssh using a variety of common usernames (root,
@@ -287,12 +295,12 @@ Replace `USERNAME` and `XXX.XXX.XXX.XXX` with your new username and server's IP 
 be prompted for your password. Type that in and you're in as yourself!
 
 *Note: if your username on your local workstation is the same as your username on the new
-Dediserve system, you don't need to include it in the `ssh` command, so you can connect by
+DO system, you don't need to include it in the `ssh` command, so you can connect by
 simply typing `ssh XXX.XXX.XXX.XXX`. `ssh` will use your local username by default!*
 
 ### Disable root login via ssh
 
-Before we do anything, we're going to disable the ability for root to ssh into your machine.
+Before we do anything else, we're going to disable the ability for root to ssh into your machine.
 Doing this is a two-step process:
 
  1. Edit the `sshd_config` file to disallow root login
@@ -302,7 +310,7 @@ The `sshd_config` file lives in `/etc/ssh/sshd_config`, so we'll open that up in
 command-line text editor. Because that is a system configuration file, you'll need to use `sudo`
 to edit that file with administrator priviledges:
 
-    sudo vim /etc/ssh/sshd_config
+    sudo nano /etc/ssh/sshd_config
 
 Locate the line that reads:
 
@@ -317,9 +325,9 @@ After making that change, save the file and exit the text editor.
 Now, we'll restart the `sshd` process. This command also requires administrator priviledges, so
 we'll use `sudo`:
 
-    sudo /etc/init.d/ssh restart
+    sudo restart ssh
 
-Now, if you try to log into the server as the `root` user, it will not let you and give you the
+Now, if you try to log into the server as the `root` user, it will not allow it and give you the
 impression that you've got the incorrect password. This is done to waste the time of the attacker
 rather than letting them know that their attempts are frivolous.
 
