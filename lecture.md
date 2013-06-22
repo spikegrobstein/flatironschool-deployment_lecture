@@ -867,8 +867,60 @@ And that's it. Once it's running, you should be able to access your application 
 
 in a web browser.
 
+### Troubleshooting
 
-#### Virtual Hosts
+Sometimes, `nginx` may fail to start. This may be due to a configuration issue or because `nginx`
+is already running. Here, I'll go over some common issues.
+
+#### Server already running
+
+If you see an error similar to the following:
+
+    nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+    nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+    nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+    nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+    nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+    nginx: [emerg] still could not bind()
+
+What the error means is that `nginx` tried to start but there was already something
+using port 80 (the http port). In most cases, this is another instance of `nginx` running, but it
+could also mean that there is another webserver running.
+
+To stop `nginx`, you can issue the following command:
+
+    sudo nginx -s stop
+
+#### Permissions issues
+
+Sometimes, when you attempt to start `nginx`, you'll see an error like the following:
+
+    nginx: [alert] could not open error log file: open() "/var/log/nginx/error.log" failed (13: Permission denied)
+
+This means that `nginx` attempted to open a file for reading or writing, in this case, it was a log file,
+but did not have sufficient permissions to do so. One common cause for this is that you started `nginx`
+as your personal user without using `sudo`, or the file it tried to open simply does not have the proper
+permissions.
+
+If you *are* using `sudo`, then try to change permissions on the file in question so that it's owned by the
+`nginx` user. You can do it like so:
+
+    sudo chown www-data /var/log/nginx/error.log
+
+The `chown` command is for changing ownership of files and directories. You can read more about `chown`
+by looking at its `man` page (`man chown`).
+
+When a user owns a file, they have read/write access to it regardless of actual permissions on it.
+You can check who owns a file or directory by using `ls` with the `-l` (lower-case ell) switch, which should
+have output similar to the following:
+
+    spike@spike001:~$ ls -l /var/log/nginx/error.log
+    -rw-r----- 1 www-data adm 530 Jun 22 17:03 /var/log/nginx/error.log
+
+You can see that `www-data` owns the file above and the `adm` is the group that owns the file. See the `ls`
+man page for more information by calling `man ls` on the commandline.
+
+### Virtual Hosts
 
 nginx also has a feature that it supports called Virtual Hosts, or "vhosts". When a
 request comes in via http, a header in the request indicates what hostname the
