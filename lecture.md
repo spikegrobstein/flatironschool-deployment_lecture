@@ -723,7 +723,7 @@ that nginx completed successfully:
 
       http {
           ...
-          passenger_root /var/lib/gems/1.9.1/gems/passenger-3.0.17;
+          passenger_root /var/lib/gems/1.9.1/gems/passenger-4.0.5;
           passenger_ruby /usr/bin/ruby1.9.1;
           ...
       }
