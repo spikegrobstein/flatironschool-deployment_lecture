@@ -377,7 +377,7 @@ The first package to install is the `build-essential` package:
 
 Then install the various Ruby packages:
 
-    sudo apt-get install ruby1.9.3 sqlite3 libsqlite3-ruby libsqlite3-dev
+    sudo apt-get install ruby1.9.3 sqlite3 libsqlite3-ruby1.9.1 libsqlite3-dev
 
 That installs Ruby and the sqlite3 libraries required to install the sqlite3 gem.
 
