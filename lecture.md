@@ -767,12 +767,12 @@ up handlers in the process.
 ### Configuring nginx
 
 nginx's configuration files are plain text and live at `/opt/nginx/conf`. We'll use
-`vim` to edit them. To edit the primary nginx config file (`nginx.conf`) run the
+`nano` to edit them. To edit the primary nginx config file (`nginx.conf`) run the
 following command:
 
-    sudo vim /opt/nginx/conf/nginx.conf
+    sudo nano /opt/nginx/conf/nginx.conf
 
-This will open up the vim editor and you can start editing.
+This will open up the nano editor and you can start editing.
 
 The nginx config format is easy to read and is structured with blocks of
 configuration surrounded by braces ({}). Each line of configuration is terminated with
