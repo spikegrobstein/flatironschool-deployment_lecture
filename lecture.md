@@ -4,9 +4,9 @@
 
 ## Who am I?
 
- * Sr DevOps Engineer at Ticket Evolution
- * Systems and Software Engineer in one, specializing in automation and deployment
- * over 10 years of Linux experience
+ * DevOps / Site Reliability Engineer at Shutterstock
+ * Systems and Software Engineer in one, specializing in automation, deployment and reliability
+ * over 10 years of Linux administration experience
 
 ## What this lecture will cover
 
