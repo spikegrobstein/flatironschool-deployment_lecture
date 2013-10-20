@@ -203,7 +203,7 @@ Using the IP that DO displayed in their dashboard after you created your VM, let
 to our fresh server instance. To do this, we use the `ssh` command in the Terminal on your local
 development machine:
 
-    ssh root@XXX.XXX.XXX.XXX
+    local> ssh root@XXX.XXX.XXX.XXX
 
 Replace `XXX.XXX.XXX.XXX` with the IP for your machine.
 
@@ -236,7 +236,7 @@ options that it accepts for customizing your user, but that's beyond the scope o
 If you're curious, you can get a full list of all of the options by typing the following into your
 ssh session:
 
-    useradd --help
+    server> useradd --help
 
 The settings that we're most interested in are as follows:
 
@@ -260,7 +260,7 @@ priviledges.
 
 To create your user type the following command:
 
-    useradd -s /bin/bash -G sudo -m USERNAME
+    server> useradd -s /bin/bash -G sudo -m USERNAME
 
 Replace `USERNAME` with the name of your user. Typically, I use my first name, but some people
 use first initial, last name or their handle (Twitter or GitHub username).
@@ -268,7 +268,7 @@ use first initial, last name or their handle (Twitter or GitHub username).
 Next, because your user has no password set by default, you want to set a password for your
 user, so run the following command:
 
-    passwd USERNAME
+    server> passwd USERNAME
 
 Again, replace `USERNAME` with the name of your user.
 
@@ -289,7 +289,7 @@ to log in should be one of the first things that you do after you create your ow
 You should now be able to log into your server as your new user, so disconnect by typing `exit`,
 which brings you back to your local machine's prompt, and re-connect using the following command:
 
-    ssh USERNAME@XXX.XXX.XXX.XXX
+    local> ssh USERNAME@XXX.XXX.XXX.XXX
 
 Replace `USERNAME` and `XXX.XXX.XXX.XXX` with your new username and server's IP and you should
 be prompted for your password. Type that in and you're in as yourself!
@@ -310,7 +310,7 @@ The `sshd_config` file lives in `/etc/ssh/sshd_config`, so we'll open that up in
 command-line text editor. Because that is a system configuration file, you'll need to use `sudo`
 to edit that file with administrator priviledges:
 
-    sudo nano /etc/ssh/sshd_config
+    server> sudo nano /etc/ssh/sshd_config
 
 Locate the line that reads:
 
@@ -325,7 +325,7 @@ After making that change, save the file and exit the text editor.
 Now, we'll restart the `sshd` process. This command also requires administrator priviledges, so
 we'll use `sudo`:
 
-    sudo restart ssh
+    server> sudo restart ssh
 
 Now, if you try to log into the server as the `root` user, it will not allow it and give you the
 impression that you've got the incorrect password. This is done to waste the time of the attacker
@@ -359,11 +359,11 @@ all system updates.
 
 Run the following command to update the apt repository:
 
-    sudo apt-get update
+    server> sudo apt-get update
 
 Then upgrade all installed packages:
 
-    sudo apt-get upgrade
+    server> sudo apt-get upgrade
 
 Press enter when prompted to confirm the packages to update. Any time apt is going to install
 more than the program you selected, due to dependencies, it will confirm with you before
@@ -373,24 +373,24 @@ At this point, we're ready to start installing all of our necessary packages.
 
 The first package to install is the `build-essential` package:
 
-    sudo apt-get install build-essential
+    server> sudo apt-get install build-essential
 
 Then install the various Ruby packages:
 
-    sudo apt-get install ruby1.9.3 sqlite3 libsqlite3-ruby1.9.1 libsqlite3-dev
+    server> sudo apt-get install ruby1.9.3 sqlite3 libsqlite3-ruby1.9.1 libsqlite3-dev
 
 That installs Ruby and the sqlite3 libraries required to install the sqlite3 gem.
 
 We also need to install git (for deploying our app):
 
-    sudo apt-get install git
+    server> sudo apt-get install git
 
 And lastly, we need to install some XML libraries so we can use the Nokogiri gem. Because
 Nokogiri is compiled from C code and leverages 2 libraries: `libxml2` and `libxslt`, we need
 to ensure that the necessary header files are available. To install those packages, run the
 following command:
 
-    sudo apt-get install libxml2-dev libxslt1-dev
+    server> sudo apt-get install libxml2-dev libxslt1-dev
 
 Without those headers, you'll recieve an error from bundler when it tries to install the
 Nokogiri gem.
@@ -404,7 +404,7 @@ Because we use Bundler for our application's gem dependency management, the only
 install manually are the ones required for running the application in production and Bundler
 itself:
 
-    sudo gem install bundler
+    server> sudo gem install bundler
 
 We'll be running our application in Passenger, which is a Rack appserver that acts as a module
 for nginx, a high-performance, evented webserver which is quickly catching up to Apache as
@@ -412,11 +412,11 @@ the number one Linux webserver and is the goto webserver for Rails deployments a
 
 We then need to install the `sqlite3` gem:
 
-    sudo gem install sqlite3 sinatra
+    server> sudo gem install sqlite3 sinatra
 
 To install Passenger, first we install the gem:
 
-    sudo gem install passenger
+    server> sudo gem install passenger
 
 The Passenger gem installs all of the helper applications and scripts for installing it either
 as an Apache or nginx module. Since we're going to run this in nginx, that's what we'll focus
@@ -445,7 +445,7 @@ makes 2 commands available to you:
 
 To get started, in your Terminal, `cd` into your repository's directory and type:
 
-    capify .
+    local> capify .
 
 This creates a `Capfile` and creates a directory called `config` which contains `deploy.rb`.
 The `Capfile` is the entrypoint for `cap` to access its configuration.
@@ -534,7 +534,7 @@ project's settings on Github.
 
 To generate the keys, type the following command on your server:
 
-    ssh-keygen -t rsa -b 4096
+    server> ssh-keygen -t rsa -b 4096
 
 When running that command, `ssh-keygen` will prompt you for the location of the files and
 an optional password for the key. **Do not set a password on this key.** Doing so defeats
@@ -578,7 +578,7 @@ link. In that screen, you'll see a link to **Deploy Keys**. Click that and click
 On your server, you can dump the contents of `id_rsa.pub`, your public key, to the terminal
 by using the following command:
 
-    cat ~/.ssh/id_rsa.pub
+    server> cat ~/.ssh/id_rsa.pub
 
 Then, using your mouse, select the entire key, including `ssh-rsa` at the beginning all the
 way through to your `username@host` comment at the end.
@@ -598,7 +598,7 @@ file structure exists on your server by running the built-in `deploy:setup` task
 
 From your local machine, in your repository's directory, run the following command:
 
-    cap deploy:setup
+    local> cap deploy:setup
 
 This will connect to your server, prompt for your password and create the necessary folder
 structure exists on the server. It will spit out all the actions that it's executing on the
@@ -622,7 +622,7 @@ all of your changes before doing a deploy.
 
 Once your changes are pushed to Github, it is time to deploy with this simple command
 
-    cap deploy
+    local> cap deploy
 
 A bunch of text will fly by and your application should be successfully deployed. Feel free
 to read through the output to see exactly what went on. Capistrano will print every command
@@ -641,7 +641,7 @@ To build nginx from source and install it, we run the `passenger-install-nginx-m
 that the Passenger gem provides for us. It must be run as root as it needs to install things
 into locations that may not be writable by an under-privilaged user:
 
-    sudo passenger-install-nginx-module
+    server> sudo passenger-install-nginx-module
 
 This will start the automated Passenger installer. First it will explain what it's going to do,
 then it will do a verification phase to make sure we have all of the correct libraries installed:
@@ -667,7 +667,7 @@ It turns out that we didn't install all of the correct packages. Pressing the En
 prompt passenger to display instructions for what to do next. We can install all the required
 packages with a single command:
 
-    sudo apt-get install libcurl4-openssl-dev libssl-dev zlib1g-dev
+    server> sudo apt-get install libcurl4-openssl-dev libssl-dev zlib1g-dev
 
 And then run the `passenger-install-nginx-module` again. This time, it will confirm
 that all necessary packages are installed and it will guide you through the steps
@@ -773,7 +773,7 @@ nginx's configuration files are plain text and live at `/opt/nginx/conf`. We'll 
 `nano` to edit them. To edit the primary nginx config file (`nginx.conf`) run the
 following command:
 
-    sudo nano /opt/nginx/conf/nginx.conf
+    server> sudo nano /opt/nginx/conf/nginx.conf
 
 This will open up the nano editor and you can start editing.
 
@@ -834,7 +834,7 @@ Unix-like systems (like OSX and Linux) have a thing called the `PATH` which is a
 of places that it searches when you type a command on the commandline. Such locations
 include `/bin`, `/usr/bin` and `/sbin`. You can inspect your current path by typing:
 
-    printenv PATH
+    server> printenv PATH
 
 into your console. It should return something like the following:
 
@@ -848,13 +848,13 @@ programs that isn't installed by a package manager, directly.
 
 We do this with the following command:
 
-    sudo ln -s /opt/nginx/sbin/nginx /usr/local/sbin/
+    server> sudo ln -s /opt/nginx/sbin/nginx /usr/local/sbin/
 
 Now, if we type `nginx -h`, it will spit out the usage for the nginx command.
 
 To start nginx, run the following command:
 
-    sudo nginx
+    server> sudo nginx
 
 It should immediately return you to your prompt. When you start nginx, it spawns a server
 process in the background so you can continue doing other things on the server. It will
@@ -862,7 +862,7 @@ continue to run in the background until you stop it or reboot the server.
 
 To stop nginx, you send it a "stop" signal using the `-s` switch:
 
-    sudo nginx -s stop
+    server> sudo nginx -s stop
 
 And that's it. Once it's running, you should be able to access your application by going to:
 
@@ -892,7 +892,7 @@ could also mean that there is another webserver running.
 
 To stop `nginx`, you can issue the following command:
 
-    sudo nginx -s stop
+    server> sudo nginx -s stop
 
 #### Permissions issues
 
@@ -908,7 +908,7 @@ permissions.
 If you *are* using `sudo`, then try to change permissions on the file in question so that it's owned by the
 `nginx` user. You can do it like so:
 
-    sudo chown www-data /var/log/nginx/error.log
+    server> sudo chown www-data /var/log/nginx/error.log
 
 The `chown` command is for changing ownership of files and directories. You can read more about `chown`
 by looking at its `man` page (`man chown`).
