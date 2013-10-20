@@ -23,6 +23,21 @@ Slides are available at:
 
 https://docs.google.com/presentation/d/1im8r0XhOls8sWNNWIU4KE7KWkVAO-9BphknClCxZ68s/edit
 
+## Conventions in this document
+
+This document will attempt to give an overview and explain the purpose of each action before having you
+execute them. For commands that you're typing into your terminal, it will denote them with a prefix
+of `local> ` for any commands being run on your local workstation or `server> ` for any commands
+to be run on the server.
+
+For instance, when running `uptime` on your server, it would be specified as:
+
+    server> uptime
+
+And for running `ls` on your local machine, it would be:
+
+    local> ls
+
 ## Going from development to production
 
 ### Virtualization
