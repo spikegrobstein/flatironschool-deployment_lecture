@@ -432,7 +432,10 @@ primarily used for deploying applications. That's what we're going to use it for
 In order to use Capistrano, you must first install the `capistrano` gem. This is done with
 the following command on your local machine:
 
-    gem install capistrano
+    local> gem install capistrano -v '2.15.5'
+
+Note: We are installing version 2.15.5 of Capistrano. Version 3.0.0 has just been released and is
+currently a little too buggy to use for this lecture.
 
 Capistrano does not require anything to be installed on your server except for SSH. The gem
 makes 2 commands available to you:
