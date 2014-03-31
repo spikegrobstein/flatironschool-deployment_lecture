@@ -164,9 +164,9 @@ CPU, RAM and Disk you have down to the MegaByte.
 For this class, we'll be creating our nodes with the following settings:
 
  * Ubuntu Linux 12.04 x64 Server
- * 512MB of RAM
+ * 1024MB of RAM
  * 1 CPU
- * 20GB Disk
+ * 30GB Disk
 
 The memory and disk sizes may seem small to you, considering that most of your phones probably
 have more capacity, but when it comes to running a server, without a graphical interface and
