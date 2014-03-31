@@ -437,214 +437,6 @@ The Passenger gem installs all of the helper applications and scripts for instal
 as an Apache or nginx module. Since we're going to run this in nginx, that's what we'll focus
 on.
 
-## Deployment
-
-### Capistrano
-
-Capistrano is a tool which executes commands on multiple remote servers, concurrently, and is
-primarily used for deploying applications. That's what we're going to use it for today.
-
-In order to use Capistrano, you must first install the `capistrano` gem. This is done with
-the following command on your local machine:
-
-    local> gem install capistrano -v '2.15.5'
-
-Note: We are installing version 2.15.5 of Capistrano. Version 3.0.0 has just been released and is
-currently a little too buggy to use for this lecture.
-
-Capistrano does not require anything to be installed on your server except for SSH. The gem
-makes 2 commands available to you:
-
- * `capify` which is used to prepare your application to be deployed using Capistrano.
- * `cap` for deploying your application.
-
-To get started, in your Terminal, `cd` into your repository's directory and type:
-
-    local> capify .
-
-This creates a `Capfile` and creates a directory called `config` which contains `deploy.rb`.
-The `Capfile` is the entrypoint for `cap` to access its configuration.
-
-We are going to edit the `config/deploy.rb` file to enable deployment of our application.
-The file should look as follows:
-
-    require 'bundler/capistrano' # for bundler support
-
-    set :application, "studentbody"
-    set :repository,  "GITHUB_REPOSITORY"
-
-    set :user, 'USERNAME'
-    set :deploy_to, "/home/#{ user }/#{ application }"
-    set :use_sudo, false
-
-    set :scm, :git
-
-    default_run_options[:pty] = true
-
-    role :web, "96.8.123.64"                          # Your HTTP server, Apache/etc
-    role :app, "96.8.123.64"                          # This may be the same as your `Web` server
-
-    # if you want to clean up old releases on each deploy uncomment this:
-    # after "deploy:restart", "deploy:cleanup"
-
-    # if you're still using the script/reaper helper you will need
-    # these http://github.com/rails/irs_process_scripts
-
-    # If you are using Passenger mod_rails uncomment this:
-    namespace :deploy do
-     task :start do ; end
-     task :stop do ; end
-     task :restart, :roles => :app, :except => { :no_release => true } do
-       run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
-     end
-    end
-
-Capistrano has a very declaritive syntax, but it's all Ruby. It first defines some variables
-using the `set` function. The first parameter is the name of the variable and the second is
-the value.
-
-We set the following variables:
-
- * `application` -- the name of our application; used in the `deploy_to` variable
- * `repository` -- the URL for the repository on github. Replace this with yours
- * `deploy_to` -- the location on the remote server that we will deploy the application
- * `use_sudo` -- we set this to false because we are deploying to a location that our user owns
- * `user` -- the user that we are deploying as. This should be the username you chose for your
- user when setting up the server.
- * `scm` -- this is set to the source-code-management system we're using, `:git`
-
-We then have to set `default_run_options[:pty] = true`. This is done because on some servers,
-Capistrano doesn't interact with the shell properly. In our case, this is necessary and is not
-there by default.
-
-We then define 2 roles using the `role` function. Capistrano has a concept of roles so you may
-have appservers, which serve the app, but web servers which handle the requests and a separate
-`db` server with your database. In our case, we're running on one server, so we need to define
-both the `web` and `app` roles with our server's IP.
-
-We also uncomment the `:deploy` namespace. Capistrano is a task-oriented application. Various
-tasks are defined internally, and you can define your own tasks using the `task` method. These
-tasks that we just uncommented are for starting, stopping and restarting our application via
-the Passenger interface. The `task` system is very robust and is a large enough topic to cover
-an entire class, so we won't go into detail here.
-
-We also add a line to the top of `deploy.rb` to add support for Bundler. This will make sure that
-`bundle install` is called after each deploy so all necessary gems are available to your
-application.
-
-Ensure that `Capfile` and `config/deploy.rb` are both added to your git repository and committed.
-
-### SSH Keys and Github Private Repositories
-
-#### Generate your ssh keys
-
-In the event that you're deploying your application from a private Github repository,
-you'll need to generate what is called a "deploy key." Because the repository is not
-publicly available, your server needs a way to authenticate with Github to download your
-repository. Deploy keys enable this by allowing your Github to identify your server
-and process the deployment without you needing to type in your Github username and password.
-
-To do this, we'll generate they public/private key pair and post the public one in the
-project's settings on Github.
-
-To generate the keys, type the following command on your server:
-
-    server> ssh-keygen -t rsa -b 4096
-
-When running that command, `ssh-keygen` will prompt you for the location of the files and
-an optional password for the key. **Do not set a password on this key.** Doing so defeats
-the purpose of creating the key in the first place and you will be forced to type it
-every time you use the key. You can safely press enter to choose the defaults to each of the
-three questions.
-
-#### About ssh keys
-
-What the above options in the commandline mean are:
-
- * create a key with the type of "RSA"
- * make the key size 4096 bits
-
-RSA is a global standard for encryption and in very wide use. There are other types that you
-could use, but RSA is preferred by convention.
-
-A 4096 bit key is *very* strong. The filesize tradeoff for such a strong key is acceptible
-in today's age of ubiquitous broadband and high-speed servers and workstations. In the past
-days of dial-up internet connections, your typical key size would be 1024 bit or smaller since
-the keys are used when negotiating the initial connection and identifying the user, so having
-a larger key size would increase the amount of time it takes for the first connection. Today,
-this overhead is barely measureable.
-
-'ssh-keygen' will generate 2 files:
-
- * `~/.ssh/id_rsa` -- your *private* RSA key
- * `~/.ssh/id_rsa.pub` -- your *public* RSA key
-
-Your public key is ok to share and even publicly post. It's your public identity and what is
-used to verify that you are you when you use your private key. Your private key should not
-be transferred off your server or shared at any time. In the event that either key is lost,
-you should delete the other and generate new ones.
-
-#### Adding your key to Github
-
-Add your key to Github by going to your repository's page on Github and clicking the **Settings**
-link. In that screen, you'll see a link to **Deploy Keys**. Click that and click the
-**Add deploy key** button.
-
-On your server, you can dump the contents of `id_rsa.pub`, your public key, to the terminal
-by using the following command:
-
-    server> cat ~/.ssh/id_rsa.pub
-
-Then, using your mouse, select the entire key, including `ssh-rsa` at the beginning all the
-way through to your `username@host` comment at the end.
-
-You can then paste that into the **Key** field on Github and click **Add key** to add the
-key. You'll be prompted for your password, so enter that and you're ready to begin
-preparing your deployment!
-
-You don't need to fill in a Title for the key as Github will be smart and take your
-`username@host` part from the public key and use that as the title.
-
-### Preparing the deployment
-
-Capistrano has a full deployment framework built in and with the above configuration, it has
-enough information to deploy your app. The first thing we need to do is ensure that the
-file structure exists on your server by running the built-in `deploy:setup` task.
-
-From your local machine, in your repository's directory, run the following command:
-
-    local> cap deploy:setup
-
-This will connect to your server, prompt for your password and create the necessary folder
-structure exists on the server. It will spit out all the actions that it's executing on the
-server and when it's done, you'll be brought back to your prompt.
-
-Capistrano's directory structure is pretty simple:
-
-    /home/USERNAME/studentbody/
-      releases/
-      shared/
-
-When you deploy, it makes a copy of your git repository into a timestamped directory in the
-`releases` directory. It then creates a symbolic link (or a symlink) to that new release,
-inside your applicaiton's directory, calling it `current`. What this enables you to do is
-release updates to your code, but retain older versions on the server. In the event that you
-need to revert to an older version, it becomes easy and you also have a record of what's been
-deployed in the past and when it was deployed.
-
-Capistrano deploys your code right from Github, so you have to make sure that you've pushed
-all of your changes before doing a deploy.
-
-Once your changes are pushed to Github, it is time to deploy with this simple command
-
-    local> cap deploy
-
-A bunch of text will fly by and your application should be successfully deployed. Feel free
-to read through the output to see exactly what went on. Capistrano will print every command
-it runs on each server and prefix any line of output with the name of the server that it
-came from. In cases where you're deploying to multiple servers, this can aide you in tracking
-down errors that may crop up.
-
 ## Passenger
 
 Because nginx doesn't have a loadable module feature like Apache, when you want to add a new
@@ -878,6 +670,216 @@ continue to run in the background until you stop it or reboot the server.
 To stop nginx, you send it a "stop" signal using the `-s` switch:
 
     server> sudo nginx -s stop
+
+For now keep `nginx` running.
+
+## Deployment
+
+### Capistrano
+
+Capistrano is a tool which executes commands on multiple remote servers, concurrently, and is
+primarily used for deploying applications. That's what we're going to use it for today.
+
+In order to use Capistrano, you must first install the `capistrano` gem. This is done with
+the following command on your local machine:
+
+    local> gem install capistrano -v '2.15.5'
+
+Note: We are installing version 2.15.5 of Capistrano. Version 3.0.0 has just been released and is
+currently a little too buggy to use for this lecture.
+
+Capistrano does not require anything to be installed on your server except for SSH. The gem
+makes 2 commands available to you:
+
+ * `capify` which is used to prepare your application to be deployed using Capistrano.
+ * `cap` for deploying your application.
+
+To get started, in your Terminal, `cd` into your repository's directory and type:
+
+    local> capify .
+
+This creates a `Capfile` and creates a directory called `config` which contains `deploy.rb`.
+The `Capfile` is the entrypoint for `cap` to access its configuration.
+
+We are going to edit the `config/deploy.rb` file to enable deployment of our application.
+The file should look as follows:
+
+    require 'bundler/capistrano' # for bundler support
+
+    set :application, "studentbody"
+    set :repository,  "GITHUB_REPOSITORY"
+
+    set :user, 'USERNAME'
+    set :deploy_to, "/home/#{ user }/#{ application }"
+    set :use_sudo, false
+
+    set :scm, :git
+
+    default_run_options[:pty] = true
+
+    role :web, "96.8.123.64"                          # Your HTTP server, Apache/etc
+    role :app, "96.8.123.64"                          # This may be the same as your `Web` server
+
+    # if you want to clean up old releases on each deploy uncomment this:
+    # after "deploy:restart", "deploy:cleanup"
+
+    # if you're still using the script/reaper helper you will need
+    # these http://github.com/rails/irs_process_scripts
+
+    # If you are using Passenger mod_rails uncomment this:
+    namespace :deploy do
+     task :start do ; end
+     task :stop do ; end
+     task :restart, :roles => :app, :except => { :no_release => true } do
+       run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
+     end
+    end
+
+Capistrano has a very declaritive syntax, but it's all Ruby. It first defines some variables
+using the `set` function. The first parameter is the name of the variable and the second is
+the value.
+
+We set the following variables:
+
+ * `application` -- the name of our application; used in the `deploy_to` variable
+ * `repository` -- the URL for the repository on github. Replace this with yours
+ * `deploy_to` -- the location on the remote server that we will deploy the application
+ * `use_sudo` -- we set this to false because we are deploying to a location that our user owns
+ * `user` -- the user that we are deploying as. This should be the username you chose for your
+ user when setting up the server.
+ * `scm` -- this is set to the source-code-management system we're using, `:git`
+
+We then have to set `default_run_options[:pty] = true`. This is done because on some servers,
+Capistrano doesn't interact with the shell properly. In our case, this is necessary and is not
+there by default.
+
+We then define 2 roles using the `role` function. Capistrano has a concept of roles so you may
+have appservers, which serve the app, but web servers which handle the requests and a separate
+`db` server with your database. In our case, we're running on one server, so we need to define
+both the `web` and `app` roles with our server's IP.
+
+We also uncomment the `:deploy` namespace. Capistrano is a task-oriented application. Various
+tasks are defined internally, and you can define your own tasks using the `task` method. These
+tasks that we just uncommented are for starting, stopping and restarting our application via
+the Passenger interface. The `task` system is very robust and is a large enough topic to cover
+an entire class, so we won't go into detail here.
+
+We also add a line to the top of `deploy.rb` to add support for Bundler. This will make sure that
+`bundle install` is called after each deploy so all necessary gems are available to your
+application.
+
+Ensure that `Capfile` and `config/deploy.rb` are both added to your git repository and committed.
+
+### SSH Keys and Github Private Repositories
+
+#### Generate your ssh keys
+
+In the event that you're deploying your application from a private Github repository,
+you'll need to generate what is called a "deploy key." Because the repository is not
+publicly available, your server needs a way to authenticate with Github to download your
+repository. Deploy keys enable this by allowing your Github to identify your server
+and process the deployment without you needing to type in your Github username and password.
+
+To do this, we'll generate they public/private key pair and post the public one in the
+project's settings on Github.
+
+To generate the keys, type the following command on your server:
+
+    server> ssh-keygen -t rsa -b 4096
+
+When running that command, `ssh-keygen` will prompt you for the location of the files and
+an optional password for the key. **Do not set a password on this key.** Doing so defeats
+the purpose of creating the key in the first place and you will be forced to type it
+every time you use the key. You can safely press enter to choose the defaults to each of the
+three questions.
+
+#### About ssh keys
+
+What the above options in the commandline mean are:
+
+ * create a key with the type of "RSA"
+ * make the key size 4096 bits
+
+RSA is a global standard for encryption and in very wide use. There are other types that you
+could use, but RSA is preferred by convention.
+
+A 4096 bit key is *very* strong. The filesize tradeoff for such a strong key is acceptible
+in today's age of ubiquitous broadband and high-speed servers and workstations. In the past
+days of dial-up internet connections, your typical key size would be 1024 bit or smaller since
+the keys are used when negotiating the initial connection and identifying the user, so having
+a larger key size would increase the amount of time it takes for the first connection. Today,
+this overhead is barely measureable.
+
+'ssh-keygen' will generate 2 files:
+
+ * `~/.ssh/id_rsa` -- your *private* RSA key
+ * `~/.ssh/id_rsa.pub` -- your *public* RSA key
+
+Your public key is ok to share and even publicly post. It's your public identity and what is
+used to verify that you are you when you use your private key. Your private key should not
+be transferred off your server or shared at any time. In the event that either key is lost,
+you should delete the other and generate new ones.
+
+#### Adding your key to Github
+
+Add your key to Github by going to your repository's page on Github and clicking the **Settings**
+link. In that screen, you'll see a link to **Deploy Keys**. Click that and click the
+**Add deploy key** button.
+
+On your server, you can dump the contents of `id_rsa.pub`, your public key, to the terminal
+by using the following command:
+
+    server> cat ~/.ssh/id_rsa.pub
+
+Then, using your mouse, select the entire key, including `ssh-rsa` at the beginning all the
+way through to your `username@host` comment at the end.
+
+You can then paste that into the **Key** field on Github and click **Add key** to add the
+key. You'll be prompted for your password, so enter that and you're ready to begin
+preparing your deployment!
+
+You don't need to fill in a Title for the key as Github will be smart and take your
+`username@host` part from the public key and use that as the title.
+
+### Preparing the deployment
+
+Capistrano has a full deployment framework built in and with the above configuration, it has
+enough information to deploy your app. The first thing we need to do is ensure that the
+file structure exists on your server by running the built-in `deploy:setup` task.
+
+From your local machine, in your repository's directory, run the following command:
+
+    local> cap deploy:setup
+
+This will connect to your server, prompt for your password and create the necessary folder
+structure exists on the server. It will spit out all the actions that it's executing on the
+server and when it's done, you'll be brought back to your prompt.
+
+Capistrano's directory structure is pretty simple:
+
+    /home/USERNAME/studentbody/
+      releases/
+      shared/
+
+When you deploy, it makes a copy of your git repository into a timestamped directory in the
+`releases` directory. It then creates a symbolic link (or a symlink) to that new release,
+inside your applicaiton's directory, calling it `current`. What this enables you to do is
+release updates to your code, but retain older versions on the server. In the event that you
+need to revert to an older version, it becomes easy and you also have a record of what's been
+deployed in the past and when it was deployed.
+
+Capistrano deploys your code right from Github, so you have to make sure that you've pushed
+all of your changes before doing a deploy.
+
+Once your changes are pushed to Github, it is time to deploy with this simple command
+
+    local> cap deploy
+
+A bunch of text will fly by and your application should be successfully deployed. Feel free
+to read through the output to see exactly what went on. Capistrano will print every command
+it runs on each server and prefix any line of output with the name of the server that it
+came from. In cases where you're deploying to multiple servers, this can aide you in tracking
+down errors that may crop up.
 
 And that's it. Once it's running, you should be able to access your application by going to:
 
