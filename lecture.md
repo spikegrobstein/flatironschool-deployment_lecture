@@ -911,6 +911,8 @@ To stop `nginx`, you can issue the following command:
 
     server> sudo nginx -s stop
 
+At this point you should be able to start `nginx` up without the above error.
+
 #### Permissions issues
 
 Sometimes, when you attempt to start `nginx`, you'll see an error like the following:
